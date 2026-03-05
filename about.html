@@ -1,0 +1,66 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>О нас</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="calculator.html">Калькулятор</a>
+      <a href="about.html">О нас</a>
+      <a href="profile.html">Профиль</a>
+    </nav>
+  </header>
+
+  <main style="padding-top: 200px; color: #f7dfda;">
+    <h1>О мне</h1>
+    <p>Здесь будет информация о моем проекте...</p>
+  </main>
+
+  <style>
+    :root{
+  --bg: #FCECEC;
+  }          /* фон страницы */
+
+  header{
+  position: fixed; /*Закрепили*/
+  top: 0; /*прижал к краям */
+  left: 0;
+  width: 100%; /*Растянул на экран*/
+  height: 70px;
+  background: #FCECEC;
+  display: flex;
+  align-items: center; /*3 строчки для нормального выравнивания*/
+  justify-content: center;
+  z-index: 1000; /*Чтобы возвышался над всеми слоями сайта*/
+}
+nav{
+  display: flex;
+  gap: 40px;
+}
+nav a{
+  color: #111827;
+  text-decoration: none; /*Убрал подчеркивания ссылок*/
+  font-size: 18px;
+  font-weight: 500;
+}
+nav a:hover{
+  color: #b91515; /*При наведении на текст*/
+}
+body{
+    margin: 0;
+    min-height: 100vh;  /* Высота экрана */
+    place-items: center;
+    padding-top: 130px;
+    background:
+      url("Frame 9.png") center 50px / cover no-repeat,
+      var(--bg); /* фон под фото */
+  }
+  * { box-sizing: border-box; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; }
+</style>
+</body>
+</html>

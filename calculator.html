@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Калькулятор</title>
+  <script src="script.js" defer></script>
+  <style>
+  :root{
+    --bg: #FCECEC;          /* фон страницы */
+    --card: #111827;        /* корпус калькулятора */
+    --screen: #f02929;      /* экран */
+    --text: #e5e7eb;             /* Основной цвет текста на кнопках. */
+    --muted: #9ca3af;        /* Приглушённый цвет */
+    --btn: #1f2937;         /* обычная кнопка */
+    --btnHover: #2b3647;    /* обычная кнопка при наведении */
+    --op: #f59e0b;          /* кнопки операций */
+    --opHover: #ffb020;      /* кнопки операций при наведении */
+    --danger: #940121;      /* C */
+    --dangerHover: #b91515;       /* C при наведении */
+    --shadow: 0 18px 50px rgba(0,0,0,.45);      /* тень для кнопок */
+  }
+
+  * { box-sizing: border-box; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; }
+
+  body{
+    margin: 0;
+    min-height: 100vh;  /* Высота экрана */
+    display: grid;
+    place-items: center;
+    padding-top: 130px;
+    background:
+      url("Frame 9.png") center 50px / cover no-repeat,
+      var(--bg); /* фон под фото */
+  }
+
+  /* Корпус калькулятора */
+  body > div{
+    width: 500px;
+    background: var(--card); /* цвет корпуса калькулятора, отсылка на х */
+    padding: 50px; /* Отступы от кнопок до краев */
+    border-radius: 90px; /* скругление */
+  }
+
+  /* экранчик куда выходят рез-ты */
+  #result{
+    height: 70px;
+    background: var(--screen);
+    border-radius: 25px;
+    max-width: 400px;
+    padding: 10px 16px; /* отступы для симетричного результата +- */
+    margin-bottom: 14px;  /* отступ от нижних кнопок */
+    font-size: 40px; /* Размер текста для резов */
+    font-weight: 500; /* Кегль */
+    text-align: right;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    overflow: hidden;  /* Обрезка содержимого */
+    text-overflow: ellipsis; /* Многоточие при переполнении */
+  }
+
+  /* контейнер кнопок: это div, который идет сразу после #result */
+  #result + div{
+    display: grid;
+    gap: 14px;
+  }
+
+  /* каждый ряд кнопок */
+  #result + div > div{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 колонки одинаковой ширины */
+    gap: 14px; /* расстояние между кнопками */
+  }
+
+  button{
+    height: 58px;
+    border: 0;
+    border-radius: 14px;
+    background: var(--btn);
+    color: var(--text);
+    font-size: 20px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 8px 18px rgba(0,0,0,.25);
+    transition: transform .05s ease, background .15s ease, filter .15s ease; /* эфект для плавности */
+  }
+
+  button:hover{ background: var(--btnHover); } /*Цвет при наведении(цифр) */
+  button:active{ transform: translateY(1px) scale(.99); } /* Цвет при нажатии кнопки (цифр) */
+
+  #btn_op_clear{ background: var(--danger); } /*Цвет кнопки С */
+  #btn_op_clear:hover{ background: var(--dangerHover); } /*Цвет кнопки С при наведении*/
+
+  #btn_op_div, #btn_op_mult, #btn_op_minus, #btn_op_plus{
+    background: rgba(245,158,11,.95);
+    color: #111827;
+  }
+  #btn_op_div:hover, #btn_op_mult:hover, #btn_op_minus:hover, #btn_op_plus:hover{
+    background: var(--opHover);
+  }
+
+  #btn_op_equal{
+    background: #22c55e;
+    color: #06210f;
+    grid-column: span 2;
+  }
+  #btn_op_equal:hover{ filter: brightness(1.06); }
+
+  #btn_digit_0{ grid-column: span 2; }
+
+  #btn_op_sign, #btn_op_percent{
+    background: rgba(156,163,175,.22);
+  }
+  #btn_op_sign:hover, #btn_op_percent:hover{
+    background: rgba(156,163,175,.32);
+  }
+
+  /*Начало части Хедера*/
+header{
+  position: fixed; /*Закрепили*/
+  top: 0; /*прижал к краям */
+  left: 0;
+  width: 100%; /*Растянул на экран*/
+  height: 70px;
+  background: #FCECEC;
+  display: flex;
+  align-items: center; /*3 строчки для нормального выравнивания*/
+  justify-content: center;
+  z-index: 1000; /*Чтобы возвышался над всеми слоями сайта*/
+}
+nav{
+  display: flex;
+  gap: 40px;
+}
+nav a{
+  color: #111827;
+  text-decoration: none; /*Убрал подчеркивания ссылок*/
+  font-size: 18px;
+  font-weight: 500;
+}
+nav a:hover{
+  color: #b91515; /*При наведении на текст*/
+}
+</style>
+</head>
+
+
+<body>
+  <header>
+    <nav> 
+      <a href="calculator.html">Калькулятор</a> 
+      <a href="about.html">О нас</a>
+      <a href="profile.html">Профиль</a> 
+    </nav>
+  </header>
+  <div> 
+    <div id="result">
+      0
+    </div>
+    <div>
+      <div>  
+        <button id="btn_op_clear">C</button>    <!-- про тэг кнопки: https://www.w3schools.com/tags/tag_button.asp -->
+        <button id="btn_op_sign">+/-</button>
+        <button id="btn_op_percent">%</button>
+        <button id="btn_op_div">/</button>
+      </div>
+
+      <div>
+        <button id="btn_digit_7">7</button>
+        <button id="btn_digit_8">8</button>
+        <button id="btn_digit_9">9</button>
+        <button id="btn_op_mult">x</button>
+      </div>
+
+      <div>
+        <button id="btn_digit_4">4</button>
+        <button id="btn_digit_5">5</button>
+        <button id="btn_digit_6">6</button>
+        <button id="btn_op_minus">-</button>
+      </div>
+
+      <div>
+        <button id="btn_digit_1">1</button>
+        <button id="btn_digit_2">2</button>
+        <button id="btn_digit_3">3</button>
+        <button id="btn_op_plus">+</button>
+      </div>
+
+      <div>
+        <button id="btn_digit_0">0</button>
+        <button id="btn_digit_dot">.</button>
+        <button id="btn_op_equal">=</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
