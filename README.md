@@ -1,4 +1,4 @@
-# ЛР 1. Calculator. HTML/CSS
+# ЛР 2. Calculator. HTML/CSS
 
 Изотов Егор ИУ5-44Б
 
