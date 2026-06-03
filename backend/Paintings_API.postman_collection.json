@@ -1,0 +1,501 @@
+{
+	"info": {
+		"_postman_id": "express-paintings-api",
+		"name": "Express Paintings API",
+		"description": "Коллекция для тестирования REST API картин на Express.js",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Получить все картины",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Статус 200', function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('Ответ — массив', function () {",
+							"    const body = pm.response.json();",
+							"    pm.expect(body).to.be.an('array');",
+							"});",
+							"",
+							"pm.test('Каждая картина содержит id и title', function () {",
+							"    const body = pm.response.json();",
+							"    body.forEach(function (item) {",
+							"        pm.expect(item).to.have.property('id');",
+							"        pm.expect(item).to.have.property('title');",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/paintings",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "3000",
+					"path": ["paintings"]
+				},
+				"description": "Получение всех картин"
+			},
+			"response": []
+		},
+		{
+			"name": "2. Поиск картин по названию",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Статус 200', function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('Ответ — массив', function () {",
+							"    const body = pm.response.json();",
+							"    pm.expect(body).to.be.an('array');",
+							"});",
+							"",
+							"pm.test('Все результаты содержат искомое слово в title', function () {",
+							"    const body = pm.response.json();",
+							"    body.forEach(function (item) {",
+							"        pm.expect(item.title.toLowerCase()).to.include('картина');",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/paintings?title=Картина",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "3000",
+					"path": ["paintings"],
+					"query": [
+						{
+							"key": "title",
+							"value": "Картина",
+							"description": "Поиск по названию картины (регистронезависимый)"
+						}
+					]
+				},
+				"description": "Поиск картин по части названия"
+			},
+			"response": []
+		},
+		{
+			"name": "3. Получить картину по ID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Статус 200', function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('ID в ответе равен 1', function () {",
+							"    const body = pm.response.json();",
+							"    pm.expect(body.id).to.equal(1);",
+							"});",
+							"",
+							"pm.test('Картина содержит обязательные поля', function () {",
+							"    const body = pm.response.json();",
+							"    pm.expect(body).to.have.property('id');",
+							"    pm.expect(body).to.have.property('title');",
+							"    pm.expect(body).to.have.property('src');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/paintings/1",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "3000",
+					"path": ["paintings", "1"]
+				},
+				"description": "Получение конкретной картины по ID"
+			},
+			"response": []
+		},
+		{
+			"name": "4. Создать новую картину",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Статус 201', function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"pm.test('Ответ содержит созданную картину с id', function () {",
+							"    const body = pm.response.json();",
+							"    pm.expect(body).to.have.property('id');",
+							"    pm.expect(body.title).to.equal('Новая картина');",
+							"    pm.expect(body.src).to.be.a('string').and.not.empty;",
+							"});",
+							"",
+							"pm.collectionVariables.set('createdId', pm.response.json().id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"src\": \"https://example.com/painting.jpg\",\n  \"title\": \"Новая картина\",\n  \"subtitle\": \"Подзаголовок\",\n  \"text\": \"Описание новой картины для тестирования\",\n  \"notification\": \"Тестовое уведомление\",\n  \"running_line\": \"Бегущая строка для тестовой картины\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/paintings",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "3000",
+					"path": ["paintings"]
+				},
+				"description": "Создание новой картины. ID генерируется автоматически. Обязательные поля: src, title, text."
+			},
+			"response": []
+		},
+		{
+			"name": "5. Обновить картину",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Статус 200', function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('subtitle обновлён', function () {",
+							"    const body = pm.response.json();",
+							"    pm.expect(body.subtitle).to.equal('Обновлённый подзаголовок');",
+							"});",
+							"",
+							"pm.test('ID не изменился', function () {",
+							"    const body = pm.response.json();",
+							"    pm.expect(body.id).to.equal(2);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"subtitle\": \"Обновлённый подзаголовок\",\n  \"text\": \"Обновлённое описание картины\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/paintings/2",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "3000",
+					"path": ["paintings", "2"]
+				},
+				"description": "Частичное обновление картины. Можно передать только нужные поля."
+			},
+			"response": []
+		},
+		{
+			"name": "6. Удалить картину",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Статус 204', function () {",
+							"    pm.response.to.have.status(204);",
+							"});",
+							"",
+							"pm.test('Тело ответа пустое', function () {",
+							"    pm.expect(pm.response.text()).to.be.empty;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/paintings/3",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "3000",
+					"path": ["paintings", "3"]
+				},
+				"description": "Удаление картины по ID. Возвращает 204 No Content при успехе."
+			},
+			"response": []
+		},
+		{
+			"name": "7. Тест 404 — Несуществующая картина",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Статус 404', function () {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"pm.test('Ответ содержит поле error', function () {",
+							"    const body = pm.response.json();",
+							"    pm.expect(body).to.have.property('error');",
+							"});",
+							"",
+							"pm.test('Текст ошибки — Картина не найдена', function () {",
+							"    const body = pm.response.json();",
+							"    pm.expect(body.error).to.equal('Картина не найдена');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/paintings/999",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "3000",
+					"path": ["paintings", "999"]
+				},
+				"description": "Проверка обработки 404 при запросе несуществующей картины"
+			},
+			"response": []
+		},
+		{
+			"name": "8. Тест 400 — Невалидные данные при создании",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Статус 400', function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"",
+							"pm.test('Ответ содержит поле error', function () {",
+							"    const body = pm.response.json();",
+							"    pm.expect(body).to.have.property('error');",
+							"});",
+							"",
+							"pm.test('Текст ошибки упоминает обязательные поля', function () {",
+							"    const body = pm.response.json();",
+							"    pm.expect(body.error).to.include('src');",
+							"    pm.expect(body.error).to.include('title');",
+							"    pm.expect(body.error).to.include('text');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"title\": \"Только название\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/paintings",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "3000",
+					"path": ["paintings"]
+				},
+				"description": "Создание картины без обязательных полей src и text — должен вернуть 400"
+			},
+			"response": []
+		},
+		{
+			"name": "9. Тест 404 — Несуществующий маршрут",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Статус 404', function () {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"pm.test('Ответ содержит поле error', function () {",
+							"    const body = pm.response.json();",
+							"    pm.expect(body).to.have.property('error');",
+							"});",
+							"",
+							"pm.test('Текст ошибки — Маршрут не найден', function () {",
+							"    const body = pm.response.json();",
+							"    pm.expect(body.error).to.equal('Маршрут не найден');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/nonexistent",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "3000",
+					"path": ["nonexistent"]
+				},
+				"description": "Проверка глобального обработчика 404 для несуществующих маршрутов"
+			},
+			"response": []
+		},
+		{
+			"name": "10. Тест 404 — Удаление несуществующей картины",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Статус 404', function () {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"pm.test('Ответ содержит поле error', function () {",
+							"    const body = pm.response.json();",
+							"    pm.expect(body).to.have.property('error');",
+							"});",
+							"",
+							"pm.test('Текст ошибки — Картина не найдена', function () {",
+							"    const body = pm.response.json();",
+							"    pm.expect(body.error).to.equal('Картина не найдена');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/paintings/999",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "3000",
+					"path": ["paintings", "999"]
+				},
+				"description": "Удаление несуществующей картины — должен вернуть 404"
+			},
+			"response": []
+		},
+		{
+			"name": "11. Тест 404 — Обновление несуществующей картины",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Статус 404', function () {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"pm.test('Ответ содержит поле error', function () {",
+							"    const body = pm.response.json();",
+							"    pm.expect(body).to.have.property('error');",
+							"});",
+							"",
+							"pm.test('Текст ошибки — Картина не найдена', function () {",
+							"    const body = pm.response.json();",
+							"    pm.expect(body.error).to.equal('Картина не найдена');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"subtitle\": \"Попытка обновить несуществующую картину\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/paintings/999",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "3000",
+					"path": ["paintings", "999"]
+				},
+				"description": "Обновление несуществующей картины — должен вернуть 404"
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "createdId",
+			"value": "",
+			"type": "string",
+			"description": "ID созданной картины (заполняется автоматически в тесте 4)"
+		}
+	]
+}
